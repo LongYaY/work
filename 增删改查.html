@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    #box {
+      width: 800px;
+      height: 500px;
+      margin: 100px auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-top: 30px;
+    }
+    table {
+      width: 600px;
+      margin: 30px auto;
+      border-collapse: collapse;
+    }
+    table,
+    th,
+    td {
+      height: 40px;
+      border: 1px solid black;
+      text-align: center;
+    }
+    th {
+      height: 40px;
+    }
+
+    button {
+      width: 70px;
+      height: 30px;
+      border: none;
+      border-radius: 5px;
+      margin-left: 5px;
+      color: white;
+      background-color: rgb(48, 129, 252);
+      cursor: pointer;
+    }
+    button:active {
+      background-color: white;
+    }
+    .mark {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    h2 {
+      margin: 15px;
+    }
+    .edit-box {
+      width: 300px;
+      height: 280px;
+      margin: 180px auto;
+      background-color: #fff;
+      text-align: center;
+      line-height: 25px;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+  <body>
+    <div id="box">
+      <div class="header">
+        姓名：<input type="text" id="username" /> 年龄：<input
+          type="text"
+          id="userage"
+        />
+        性别：<input type="text" id="usersex" />
+        <button id="add-btn">添加</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th colspan="5">学生信息表</th>
+          </tr>
+          <tr>
+            <th>ID</th>
+            <th>姓名</th>
+            <th>年龄</th>
+            <th>性别</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="mark">
+      <div class="edit-box">
+        <h2>修改表单--<b></b></h2>
+        姓名：<input type="text" name="names" /><br />
+        <br />
+        年龄：<input type="text" name="ages" /><br />
+        <br />
+        姓别：<input type="text" name="sexs" /><br />
+        <br />
+        <button id="save-btn">确定修改</button>
+        <button id="cancel-btn">取消修改</button>
+      </div>
+    </div>
+    <script src="./node_modules/jquery/dist/jquery.js"></script>
+    <script>
+      var person = [
+        {
+          id: 1,
+          name: "统桑",
+          age: 19,
+          sex: "男",
+        },
+        {
+          id: 2,
+          name: "雯桑",
+          age: 19,
+          sex: "男",
+        },
+        {
+          id: 3,
+          name: "小爱",
+          age: 18,
+          sex: "女",
+        },
+      ];
+      var index;
+
+      $(function () {
+        xr();
+        $("tbody").on("click", tbodyFun);
+        $("#add-btn").on("click", addFun);
+        $(".edit-box").on("click", editBtnFun);
+      });
+
+      function editBtnFun() {
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "确定修改"
+        ) {
+          console.log(index);
+          person[index].name = $("input[name=names]").val();
+          person[index].age = $("input[name=ages]").val();
+          person[index].sex = $("input[name=sexs]").val();
+          xr();
+          $(".mark").hide();
+        }
+      }
+
+      //取消遮罩层
+      $("#cancel-btn").on("click", function () {
+        $(".mark").hide();
+      });
+
+      //添加
+      function addFun() {
+        var name = $("#username").val();
+        var age = $("#userage").val();
+        var sex = $("#usersex").val();
+        var user = {
+          id: person.length + 1,
+          name,
+          age,
+          sex,
+        };
+        person.push(user);
+        xr();
+      }
+
+      //删除
+      function tbodyFun() {
+        index = $(event.target).data("index");
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "删除"
+        ) {
+          person.splice(index, 1);
+          xr();
+        }
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "修改"
+        ) {
+          $(".mark").show();
+          index = $(event.target).data("index");
+          $("input[name=names]").val(person[index].name);
+          $("input[name=ages]").val(person[index].age);
+          $("input[name=sexs]").val(person[index].sex);
+        }
+      }
+
+      //渲染
+      function xr() {
+        var html = "";
+        person.forEach((item, index) => {
+          html += ` <tr>
+          <td>${item.id}</td>
+          <td>${item.name}</td>
+          <td>${item.age}</td>
+          <td>${item.sex}</td>
+            <td><button  data-index=${index}>删除</button><button data-index=${index}>修改</button></td>
+          </tr>`;
+        });
+        $("tbody").html(html);
+      }
+    </script>
+  </body>
+</html>

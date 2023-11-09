@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    #box {
+      min-width: 500px;
+      min-height: 500px;
+      border: 1px solid black;
+      text-align: center;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    th,
+    td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    #box button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      background-color: #33ccff;
+      color: #fff;
+      position: relative;
+    }
+    #search {
+      width: 200px;
+      height: 30px;
+    }
+    table {
+      min-width: 1200px;
+      margin: 20px auto;
+      text-align: center;
+      border-collapse: collapse;
+    }
+    #addSong {
+      width: 400px;
+      height: 400px;
+      text-align: center;
+      padding-top: 15px;
+      margin: auto;
+      line-height: 50px;
+      background-color: #f2f2f2;
+      border: 1px solid black;
+      display: none;
+      position: absolute;
+      top: 20%;
+      left: 38%;
+    }
+    #addSong button {
+      margin: 30px 50px;
+    }
+    #modify {
+      width: 400px;
+      height: 400px;
+      text-align: center;
+      padding-top: 15px;
+      margin: auto;
+      line-height: 50px;
+      background-color: #f2f2f2;
+      border: 1px solid black;
+      display: none;
+      position: absolute;
+      top: 20%;
+      left: 38%;
+    }
+    #modify button {
+      margin: 30px 50px;
+    }
+    #addMask {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    #modifyMask {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+  </style>
+  <body>
+    <div id="box">
+      搜索：<input type="text" id="search" placeholder="输入ID搜索" />
+      <button id="searchBtb">搜索</button>
+      <button id="addBtn">添加歌曲</button>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>歌名</th>
+            <th>歌手</th>
+            <th>专辑</th>
+            <th>发行年份</th>
+            <th>歌曲类型</th>
+            <th>歌曲时间</th>
+            <th>发行时间</th>
+            <th>更新时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button id="upBtn">上一页</button>
+      <button id="downBtn">下一页</button>
+      <div id="addMask">
+        <div id="addSong">
+          <h2>添加歌曲</h2>
+          歌名：<input type="text" id="title" name="titles" /><br />
+          歌手：<input type="text" id="artist" name="artists" /><br />
+          专辑：<input type="text" id="album" name="albums" /><br />
+          发行年份：<input type="text" id="year" name="years" /><br />
+          歌曲类型：<input type="text" id="genre" name="genres" /><br />
+          <button id="saceBtn">确定保存</button>
+          <button id="elimBtn">取消</button>
+        </div>
+      </div>
+      <div id="modifyMask">
+        <div id="modify">
+          <h2>添加歌曲---<b></b></h2>
+          歌名：<input type="text" id="title" name="titlee" /><br />
+          歌手：<input type="text" id="artist" name="artiste" /><br />
+          专辑：<input type="text" id="album" name="albume" /><br />
+          发行年份：<input type="text" id="year" name="yeare" /><br />
+          歌曲类型：<input type="text" id="genre" name="genree" /><br />
+          <button id="modifyBtn">确定修改</button>
+          <button id="elimBtns">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var index;
+      let music = [],
+        pageSize = 8,
+        page = 1;
+      var tbody = document.querySelector("tbody");
+      let addBtn = document.querySelector("#addBtn");
+      let searchBtb = document.querySelector("#searchBtb");
+      let saceBtn = document.querySelector("#saceBtn");
+      let modify = document.querySelector("#modify");
+      let upBtn = document.querySelector("#upBtn");
+      let downBtn = document.querySelector("#downBtn");
+      window.onload = function () {
+        getLocalData();
+        renderList();
+        tbody.addEventListener("click", tbodyFun);
+        addBtn.addEventListener("click", addFun);
+        searchBtb.addEventListener("click", searchFun);
+        saceBtn.addEventListener("click", saceFun);
+        modify.addEventListener("click", modifyFun);
+        upBtn.addEventListener("click", upFun);
+        downBtn.addEventListener("click", downFun);
+      };
+      function upFun() {
+        page--;
+        page = page == 0 ? 1 : page;
+        renderList();
+      }
+      function downFun() {
+        page++;
+        renderList();
+      }
+
+      //搜索
+      function searchFun() {
+        let index = document.getElementById("search").value;
+        var xhr = new XMLHttpRequest();
+        let html = "";
+        xhr.open("GET", `http://mp3.zzgoodqc.cn/api/songs/${index}`);
+        xhr.send();
+        xhr.onload = function () {
+          let arr = JSON.parse(xhr.responseText);
+          arr.data.forEach(function (item) {
+            let html = `<tr>
+                          <td>${item.id}</td>
+                          <td>${item.title}</td>
+                          <td>${item.artist}</td>
+                          <td>${item.album}</td>
+                          <td>${item.year}</td>
+                          <td>${item.genre}</td>
+                        </tr>`;
+            tbody.innerHTML = html;
+          });
+        };
+      }
+
+      //添加
+      let addhidden = document.querySelector("#addSong");
+      let addMask = document.querySelector("#addMask");
+      let elimBtn = document
+        .querySelector("#elimBtn")
+        .addEventListener("click", function () {
+          addhidden.style.display = "none";
+          addMask.style.display = "none";
+        });
+      function addFun() {
+        addhidden.style.display = "block";
+        addMask.style.display = "block";
+      }
+
+      //保存添加歌曲
+      function saceFun() {
+        let title = document.querySelector("input[name='titles']").value;
+        let artist = document.querySelector("input[name='artists']").value;
+        let album = document.querySelector("input[name='albums']").value;
+        let year = document.querySelector("input[name='years']").value;
+        let genre = document.querySelector("input[name='genres']").value;
+        if (!title || !artist || !album || !year || !genre) {
+          alert("请填写完整的信息");
+          return;
+        }
+        let obj = {
+          title: title,
+          artist: artist,
+          album: album,
+          year: year,
+          genre: genre,
+        };
+        var xhr = new XMLHttpRequest();
+        xhr.open("post", "https://mp3.zzgoodqc.cn/api/songs");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify(obj));
+        xhr.onload = function () {
+          renderList();
+          addhidden.style.display = "none";
+          addMask.style.display = "none";
+        };
+      }
+
+      //修改弹窗
+      let modifyMask = document.querySelector("#modifyMask");
+      let elimBtns = document
+        .querySelector("#elimBtns")
+        .addEventListener("click", function () {
+          modify.style.display = "none";
+          modifyMask.style.display = "none";
+        });
+      let b = document.querySelector("b");
+      function modifyFun() {
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.innerHTML === "确定修改"
+        ) {
+          let title = document.querySelector("input[name='titlee']").value;
+          let artist = document.querySelector("input[name='artiste']").value;
+          let album = document.querySelector("input[name='albume']").value;
+          let year = document.querySelector("input[name='yeare']").value;
+          let genre = document.querySelector("input[name='genree']").value;
+          if (!title || !artist || !album || !year || !genre) {
+            alert("请填写完整的信息");
+            return;
+          }
+          let obj = {
+            title: title,
+            artist: artist,
+            album: album,
+            year: year,
+            genre: genre,
+          };
+          let id = b.innerHTML;
+          var xhr = new XMLHttpRequest();
+          xhr.open("PUT", `https://mp3.zzgoodqc.cn/api/songs/${id}`);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(JSON.stringify(obj));
+          xhr.onload = function () {
+            renderList();
+            modify.style.display = "none";
+            modifyMask.style.display = "none";
+          };
+        }
+      }
+
+      //删除、修改
+      function tbodyFun(event) {
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.innerHTML === "删除"
+        ) {
+          var id = event.target.dataset.id;
+          var xhr = new XMLHttpRequest();
+          xhr.open("DELETE", `https://mp3.zzgoodqc.cn/api/songs?id=${id}`);
+          xhr.send();
+          xhr.onload = function () {
+            renderList();
+          };
+        }
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.innerHTML === "修改"
+        ) {
+          modify.style.display = "block";
+          modifyMask.style.display = "block";
+          let id = event.target.dataset.id;
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", `HTTPS://mp3.zzgoodqc.cn/api/songs/` + id);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send();
+          xhr.onload = function () {
+            var arr = JSON.parse(xhr.responseText).data;
+            console.log(arr);
+            b.innerHTML = arr[0].id;
+            document.querySelector("input[name='titlee']").value = arr[0].title;
+            document.querySelector("input[name='artiste']").value =
+              arr[0].artist;
+            document.querySelector("input[name='albume']").value = arr[0].album;
+            document.querySelector("input[name='yeare']").value = arr[0].year;
+            document.querySelector("input[name='genree']").value = arr[0].genre;
+            renderList();
+          };
+        }
+      }
+
+      //存储数据到本地
+
+      //获取本地数据
+      function getLocalData() {
+        let localMusics = localStorage.getItem("localMusic");
+        if (localMusics) {
+          let songs = JSON.parse(localMusics);
+          return;
+        }
+        return [];
+      }
+
+      //渲染
+      function renderList() {
+        var xhr = new XMLHttpRequest();
+        let html = "";
+        xhr.open(
+          "GET",
+          `https://mp3.zzgoodqc.cn/api/songs?page=${page}&pageSize=${pageSize}`
+        );
+        xhr.send();
+        xhr.onload = function () {
+          let arr = JSON.parse(xhr.responseText).data;
+          arr.forEach((item, index) => {
+            html += ` <tr>
+                          <td>${item.id}</td>
+                          <td>${item.title}</td>
+                          <td>${item.artist}</td>
+                          <td>${item.album}</td>
+                          <td>${item.year}</td>
+                          <td>${item.genre}</td>
+                          <td>${item.length}</td>
+                          <td>${item.created_at}</td>
+                          <td>${item.updated_at}</td>
+                          <td><button data-id=${item.id}>删除</button> <button data-id=${item.id}>修改</button></td>
+                       </tr>`;
+          });
+          tbody.innerHTML = html;
+          localStorage.setItem("localMusic", JSON.stringify(arr));
+        };
+      }
+    </script>
+  </body>
+</html>

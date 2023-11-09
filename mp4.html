@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>歌曲管理系统</title>
+    <!-- <link rel="stylesheet" href="./style.css" /> -->
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-form {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .search-form input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .search-form button.btn {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .search-form button.add-btn {
+      background-color: #dc3545;
+    }
+
+    #addSong {
+      width: 500px;
+      height: 580px;
+      margin: 100px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    #addSong h2 {
+      margin-bottom: 20px;
+    }
+
+    #addSong .form-row {
+      margin-bottom: 10px;
+    }
+
+    #addSong input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    #addSong button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      cursor: pointer;
+      margin: 20px 0 0 100px;
+    }
+    #cancel-btn {
+      background-color: #dc3545;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    tbody button {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      cursor: pointer;
+    }
+    tbody button:first-child {
+      background-color: #dc3545;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f5f5f5;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .action-icons {
+      display: flex;
+    }
+
+    .action-icons span {
+      padding: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+
+    .action-icons .edit-icon {
+      color: #ffc107;
+    }
+
+    .action-icons .delete-icon {
+      color: #dc3545;
+    }
+
+    .page-info {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    #upBtn,
+    #downBtn {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    #mask {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    #masks {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    #modify {
+      width: 500px;
+      height: 580px;
+      margin: 100px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    #modify h2 {
+      margin-bottom: 20px;
+    }
+
+    #modify .form-row {
+      margin-bottom: 10px;
+    }
+
+    #modify input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    #modify button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      cursor: pointer;
+      margin: 20px 0 0 100px;
+    }
+    #cancels-btn {
+      background-color: #dc3545;
+    }
+    img {
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <h1>歌曲管理系统</h1>
+      <div class="search-form">
+        <input type="text" placeholder="输入ID搜索" id="search-input" />
+        <button class="btn search-btn" id="search-btn">搜索</button>
+        <button class="btn add-btn" id="addBtn">添加歌曲</button>
+      </div>
+
+      <div id="mask">
+        <div id="addSong">
+          <h2>添加歌曲</h2>
+          <div class="form-row">
+            歌名：<br />
+            <input type="text" id="name" name="names" />
+          </div>
+          <div class="form-row">
+            歌手：<br />
+            <input type="text" id="singer" name="titles" />
+          </div>
+          <div class="form-row">
+            专辑：<br />
+            <input type="text" id="album" name="albums" />
+          </div>
+          <div class="form-row">
+            封面：<br />
+            <input type="text" id="image" name="images" />
+          </div>
+          <div class="form-row">
+            发行年份：<br />
+            <input type="text" id="year" name="years" />
+          </div>
+          <div class="form-row">
+            歌曲类型：<br />
+            <input type="text" id="genre" name="genres" />
+          </div>
+          <button id="saceBtn">保存添加</button>
+          <button id="cancel-btn">取消</button>
+        </div>
+      </div>
+
+      <div id="masks">
+        <div id="modify">
+          <h2>添加歌曲---<b></b></h2>
+          <div class="form-row">
+            歌名：<br />
+            <input type="text" id="names" name="namese" />
+          </div>
+          <div class="form-row">
+            歌手：<br />
+            <input type="text" id="singers" name="titlee" />
+          </div>
+          <div class="form-row">
+            专辑：<br />
+            <input type="text" id="albums" name="albumse" />
+          </div>
+          <div class="form-row">
+            封面：<br />
+            <input type="text" id="images" name="imagese" />
+          </div>
+          <div class="form-row">
+            发行年份：<br />
+            <input type="text" id="years" name="yearse" />
+          </div>
+          <div class="form-row">
+            歌曲类型：<br />
+            <input type="text" id="genres" name="genrese" />
+          </div>
+          <button id="additions-btn">保存修改</button>
+          <button id="cancels-btn">取消</button>
+        </div>
+      </div>
+
+      <table id="song-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>歌名</th>
+            <th>歌手</th>
+            <th>专辑</th>
+            <th>封面</th>
+            <th>发行年份</th>
+            <th>歌曲类型</th>
+            <th>歌曲时间</th>
+            <th>发行时间</th>
+            <th>更新时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button id="upBtn">上一页</button>
+      <button id="downBtn">下一页</button>
+    </div>
+    <script>
+      let songs = [],
+        page = 1,
+        pageSize = 7;
+      let tbody = document.querySelector("tbody");
+      let addBtn = document.querySelector("#addBtn");
+      let addSong = document.querySelector("#addSong");
+      let cancelbtn = document.querySelector("#cancel-btn");
+      let saceBtn = document.querySelector("#saceBtn");
+      let upBtn = document.querySelector("#upBtn");
+      let downBtn = document.querySelector("#downBtn");
+      let searchBtn = document.querySelector("#search-btn");
+      let modify = document.querySelector("#modify");
+      let additionsBtn = document.querySelector("#additions-btn");
+
+      window.onload = function () {
+        renderList();
+        tbody.addEventListener("click", tbodyFun);
+        addBtn.addEventListener("click", addBtnFun);
+        addSong.addEventListener("click", addSongFun);
+        saceBtn.addEventListener("click", saceBtnFun);
+        searchBtn.addEventListener("click", searchFun);
+        upBtn.addEventListener("click", upFun);
+        downBtn.addEventListener("click", downFun);
+        modify.addEventListener("click", modifyFun);
+        additionsBtn.addEventListener("click", additionsFun);
+      };
+
+      //上一页
+      function upFun() {
+        page--;
+        page = page == 0 ? 1 : page;
+        renderList();
+      }
+      //下一页
+      function downFun() {
+        page++;
+        renderList();
+      }
+      //搜索
+      function searchFun() {
+        let input = document.querySelector("#search-input").value;
+        let xhr = new XMLHttpRequest();
+        let html = "";
+        xhr.open("GET", `https://mp3.zzgoodqc.cn/api/songs/${input}`);
+        xhr.send();
+        xhr.onload = function () {
+          let arr = JSON.parse(xhr.responseText);
+          arr.data.forEach((item) => {
+            html += `<tr>
+                          <td>${item.id}</td>
+                          <td>${item.title}</td>
+                          <td>${item.artist}</td>
+                          <td>${item.album}</td>
+                          <td> <img src="${item.image_url}" alt=""></td>
+                          <td>${item.year}</td>
+                          <td>${item.genre}</td>
+                        </tr>`;
+            tbody.innerHTML = html;
+          });
+        };
+      }
+
+      //点击取消隐藏列表
+      function addSongFun() {
+        cancelbtn.addEventListener("click", function () {
+          mask.style.display = "none";
+          addSong.style.display = "none";
+        });
+      }
+      //显示添加列表
+      let mask = document.querySelector("#mask");
+      function addBtnFun() {
+        mask.style.display = "block";
+        addSong.style.display = "block";
+      }
+
+      //添加歌曲
+      function saceBtnFun() {
+        let title = document.querySelector("input[name='names']").value;
+        let artist = document.querySelector("input[name='titles']").value;
+        let album = document.querySelector("input[name='albums']").value;
+        let image_url = document.querySelector("input[name='images']").value;
+        let year = document.querySelector("input[name='years']").value;
+        let genre = document.querySelector("input[name='genres']").value;
+        if (!title || !artist || !album || !image_url || !year || !genre) {
+          alert("请输入完整的信息");
+          return;
+        }
+        let obj = {
+          title: title,
+          artist: artist,
+          album: album,
+          image_url: image_url,
+          year: year,
+          genre: genre,
+        };
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", `https://mp3.zzgoodqc.cn/api/songs`);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify(obj));
+        xhr.onload = function () {
+          renderList();
+          addSong.style.display = "none";
+          mask.style.display = "none";
+        };
+      }
+
+      let masks = document.querySelector("#masks");
+      let cancelsBtn = document.querySelector("#cancels-btn");
+      cancelsBtn.addEventListener("click", function () {
+        masks.style.display = "none";
+      });
+      function additionsFun() {
+        masks.style.display = "none";
+        renderList();
+      }
+
+      let b = document.querySelector("b");
+      function modifyFun() {
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.innerHTML === "保存修改"
+        ) {
+          let title = document.querySelector("input[name='namese']").value;
+          let artist = document.querySelector("input[name='titlee']").value;
+          let album = document.querySelector("input[name='albumse']").value;
+          let image_url = document.querySelector("input[name='imagese']").value;
+          let year = document.querySelector("input[name='yearse']").value;
+          let genre = document.querySelector("input[name='genrese']").value;
+          if (!title || !artist || !album || !image_url || !year || !genre) {
+            alert("请填写完整的信息");
+            return;
+          }
+          let obj = {
+            title: title,
+            artist: artist,
+            album: album,
+            image_url: image_url,
+            year: year,
+            genre: genre,
+          };
+          let id = b.innerHTML;
+          var xhr = new XMLHttpRequest();
+          xhr.open("PUT", `https://mp3.zzgoodqc.cn/api/songs/${id}`);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(JSON.stringify(obj));
+          xhr.onload = function () {
+            renderList();
+            masks.style.display = "none";
+          };
+        }
+      }
+
+      //删除、修改
+      function tbodyFun() {
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.innerHTML === "删除"
+        ) {
+          let id = event.target.dataset.id;
+          let xhr = new XMLHttpRequest();
+          xhr.open("DELETE", `https://mp3.zzgoodqc.cn/api/songs?id=${id}`);
+          xhr.send();
+          xhr.onload = function () {
+            renderList();
+          };
+        }
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.innerHTML === "修改"
+        ) {
+          masks.style.display = "block";
+          let id = event.target.dataset.id;
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", `HTTPS://mp3.zzgoodqc.cn/api/songs/` + id);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send();
+          xhr.onload = function () {
+            var arr = JSON.parse(xhr.responseText).data;
+            console.log(arr);
+            b.innerHTML = arr[0].id;
+            document.querySelector("input[name='namese']").value = arr[0].title;
+            document.querySelector("input[name='titlee']").value =
+              arr[0].artist;
+            document.querySelector("input[name='albumse']").value =
+              arr[0].album;
+            document.querySelector("input[name='imagese']").value =
+              arr[0].image_url;
+            document.querySelector("input[name='yearse']").value = arr[0].year;
+            document.querySelector("input[name='genrese']").value =
+              arr[0].genre;
+            renderList();
+          };
+        }
+      }
+
+      //渲染列表
+      function renderList() {
+        let xhr = new XMLHttpRequest();
+        let html = "";
+        xhr.open(
+          "GET",
+          `https://mp3.zzgoodqc.cn/api/songs?page=${page}&pageSize=${pageSize}`
+        );
+        xhr.send();
+        xhr.onload = function () {
+          let arr = JSON.parse(xhr.responseText).data;
+          arr.forEach((item, index) => {
+            html += `<tr>
+                          <td>${item.id}</td>
+                          <td>${item.title}</td>
+                          <td>${item.artist}</td>
+                          <td>${item.album}</td>
+                          <td><img src="${item.image_url}" alt=""></td>
+                          <td>${item.year}</td>
+                          <td>${item.genre}</td>
+                          <td>${item.length}</td>
+                          <td>${item.created_at}</td>
+                          <td>${item.updated_at}</td>
+                          <td><button data-id=${item.id}>删除</button> <button data-id=${item.id}>修改</button></td>
+                       </tr>`;
+          });
+          tbody.innerHTML = html;
+        };
+      }
+    </script>
+  </body>
+</html>

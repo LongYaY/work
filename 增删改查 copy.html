@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    #box {
+      max-width: 750px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    #bos {
+      max-width: 300px;
+      text-align: center;
+      margin: 20px auto;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    #box button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      background-color: #4caf50;
+      color: #fff;
+    }
+    #bos button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      background-color: #4caf50;
+      color: #fff;
+    }
+  </style>
+  <body>
+    <div id="box">
+      <div>
+        姓名：<input type="text" id="name" /> 年龄：<input
+          type="text"
+          id="age"
+        />
+        性别：<input type="text" id="sex" />
+        <button id="addBtn">添加</button>
+        <br />
+        <br />
+        搜索：<input type="text" id="search" />
+        <button id="delBtn">删除选中</button>
+        <button id="sortBtn1">年龄从小到大排序</button>
+        <button id="sortBtn2">年龄从大到小排序</button>
+      </div>
+      <br />
+      <br />
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="allchk" /></th>
+              <th>姓名</th>
+              <th>年龄</th>
+              <th>性别</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr> -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script>
+      const tbodyEle = document.querySelector("tbody");
+      const addBtn = document.getElementById("addBtn");
+      const delBtn = document.getElementById("delBtn");
+      const allchk = document.getElementById("allchk");
+      const sortBtn1 = document.getElementById("sortBtn1");
+      const sortBtn2 = document.getElementById("sortBtn2");
+      const search = document.getElementById("search");
+      let editIndex = null;
+
+      window.onload = function () {
+        // const localData = localStorage.getItem("myuser");
+        // if (localData != null) {
+        //   user = JSON.parse(localData);
+        // }
+        obtain();
+        renderfun();
+        tbodyEle.addEventListener("click", tbodyFun);
+        addBtn.addEventListener("click", addFun);
+        delBtn.addEventListener("click", delFun);
+        allchk.addEventListener("change", allFun);
+        sortBtn1.addEventListener("click", sort1Fun);
+        sortBtn2.addEventListener("click", sort2Fun);
+        search.addEventListener("input", searchFun);
+        chkAllFun();
+      };
+      let user = [];
+      function store(user) {
+        localStorage.setItem("myuser", JSON.stringify(user));
+      }
+      function obtain() {
+        const localData = localStorage.getItem("myuser");
+        if (localData != null) {
+          user = JSON.parse(localData);
+        }
+      }
+
+      //反选
+      function chkAllFun() {
+        allchk.checked = user.every((item) => {
+          return item.status;
+        });
+      }
+
+      //搜索
+      function searchFun() {
+        let keyword = this.value;
+        let data = user.filter((item) => {
+          return item.name.includes(keyword);
+        });
+        renderfun(data);
+      }
+
+      //年龄从大到小排序
+      function sort2Fun() {
+        user.sort((a, b) => {
+          return b.age - a.age;
+        });
+        renderfun();
+      }
+
+      //年龄从小到大排序
+      function sort1Fun() {
+        user.sort((a, b) => {
+          return a.age - b.age;
+        });
+        renderfun();
+      }
+      //全选
+      function allFun() {
+        user.forEach((item) => {
+          item.status = this.checked;
+        });
+        // localStorage.setItem("myuser", JSON.stringify(user));
+        store(user);
+        renderfun();
+      }
+      //删除选中
+      function delFun() {
+        user = user.filter((item) => !item.status);
+        renderfun();
+      }
+      //表单点击事件
+      function tbodyFun() {
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.innerHTML === "删除"
+        ) {
+          let index = event.target.dataset.index;
+          user.splice(index, 1);
+          //   localStorage.setItem("myuser", JSON.stringify(user));
+          store(user);
+          renderfun();
+        }
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.innerHTML === "修改"
+        ) {
+          editIndex = event.target.dataset.index;
+          document.getElementById("name").value = user[editIndex].name;
+          document.getElementById("age").value = user[editIndex].age;
+          document.getElementById("sex").value = user[editIndex].sex;
+          addBtn.innerHTML = "保存";
+        }
+        if (event.target.tagName === "INPUT") {
+          let index = event.target.dataset.index;
+          user[index].status = !user[index].status;
+          //   localStorage.setItem("myuser", JSON.stringify(user));
+          store(user);
+          chkAllFun();
+        }
+        renderfun();
+      }
+
+      //添加
+      function addFun() {
+        let name = document.getElementById("name").value;
+        let age = document.getElementById("age").value;
+        let sex = document.getElementById("sex").value;
+        if (this.innerHTML == "添加") {
+          let obj = {
+            name,
+            age,
+            sex,
+            status: false,
+          };
+          user.unshift(obj);
+        } else {
+          user[editIndex].name = name;
+          user[editIndex].age = age;
+          user[editIndex].sex = sex;
+          addBtn.innerHTML = "添加";
+          document.getElementById("name").value = "";
+          document.getElementById("age").value = "";
+          document.getElementById("sex").value = "";
+        }
+        // localStorage.setItem("myuser", JSON.stringify(user));
+        store(user);
+        renderfun();
+      }
+
+      //渲染列表
+      function renderfun(data = user) {
+        let html = "";
+        data.forEach((item, index) => {
+          html += ` <tr>
+                        <td><input data-index='${index}' type='checkbox' ${
+            item.status ? "checked" : ""
+          }></td>
+                        <td>${item.name}</td>
+                        <td>${item.age}</td>
+                        <td>${item.sex}</td>
+                        <td><button data-index='${index}'>修改</button> <button data-index='${index}'>删除</button></td>
+                      </tr>`;
+        });
+        tbodyEle.innerHTML = html;
+        chkAllFun();
+      }
+    </script>
+  </body>
+</html>

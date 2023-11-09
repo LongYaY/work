@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style: none;
+    }
+    .box {
+      width: 800px;
+      height: 502px;
+      border: 1px solid black;
+      margin: 50px auto;
+    }
+    .box-left {
+      width: 200;
+      height: 500px;
+      float: left;
+    }
+    .box-left li {
+      width: 200px;
+      height: 99px;
+      text-align: center;
+      line-height: 99px;
+      border: 1px solid red;
+    }
+    .box-right {
+      width: 590px;
+      height: 500px;
+      border: 1px solid skyblue;
+      float: right;
+    }
+    .tab {
+      display: none;
+    }
+    img {
+      width: 590px;
+      height: 500px;
+    }
+    .tab.active {
+      display: block;
+    }
+  </style>
+  <div class="box">
+    <ul class="box-left">
+      <li class="active">第一</li>
+      <li>第二</li>
+      <li>第三</li>
+      <li>第四</li>
+      <li>第五</li>
+    </ul>
+    <div class="box-right">
+      <div class="tab">
+        <img
+          src="https://img.zcool.cn/community/019f2356ae319432f875520fd9c205.png@2o.png"
+          alt="Image 1"
+        />
+      </div>
+      <div class="tab">
+        <img
+          src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201710%2F07%2F20171007205338_NYrk5.jpeg&refer=http%3A%2F%2Fb-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1701831561&t=34efbfd97f6950878558a16b71622f6f"
+          alt=""
+        />
+      </div>
+      <div class="tab">
+        <img
+          src="https://gss0.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy/zhidao/pic/item/94cad1c8a786c917f2f94658c43d70cf3ac757dc.jpg"
+          alt=""
+        />
+      </div>
+      <div class="tab">
+        <img
+          src="https://img.zcool.cn/community/018e375549a0910000019ae9f8417d.jpg@3000w_1l_0o_100sh.jpg"
+          alt=""
+        />
+      </div>
+      <div class="tab">
+        <img
+          src="https://img.zcool.cn/community/0154fe5c02706ba80121ab5d3c2ab5.jpg@1280w_1l_2o_100sh.jpg"
+          alt=""
+        />
+      </div>
+    </div>
+  </div>
+  <body>
+    <script>
+      $(function () {
+        let tab = $(".box-left li");
+        tab.first().addClass("active");
+        let img = $(".tab");
+        img.first().addClass("active");
+        tab.mouseover(function () {
+          let index = $(this).index();
+          tab.removeClass("active");
+          img.removeClass("active");
+          img.eq(index).addClass("active");
+        });
+      });
+    </script>
+  </body>
+</html>

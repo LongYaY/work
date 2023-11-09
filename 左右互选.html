@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./node_modules/jquery/dist/jquery.js"></script>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style: none;
+    }
+    #box {
+      width: 800px;
+      height: 510px;
+      margin: 50px auto;
+      border: 2px solid #ff0088;
+      box-shadow: px 2px 5px rgba(226, 17, 17, 0.5);
+      padding: 10px;
+    }
+    #left {
+      width: 300px;
+      height: 500px;
+      border: 2px dashed rgb(48, 129, 252);
+      float: left;
+    }
+    #left li {
+      height: 40px;
+      line-height: 40px;
+      border-bottom: 2px dashed #ff5511;
+      padding-left: 8px;
+    }
+    #left li:first-child {
+      margin-top: 10px;
+      border-top: 2px dashed #ff0000;
+    }
+    #left-all {
+      width: 20px;
+      height: 20px;
+      margin: 10px 10px 0 10px;
+    }
+    #right-all {
+      width: 20px;
+      height: 20px;
+      margin: 10px 10px 0 10px;
+    }
+    b {
+      font-size: 20px;
+    }
+    input {
+      width: 288px;
+      height: 35px;
+      padding-left: 8px;
+      border: 2px dashed #ff7744;
+    }
+    input:focus {
+      outline: none;
+      border: 2px dashed #007bff;
+      box-shadow: 0 0 5px #007bff;
+    }
+    button {
+      width: 70px;
+      height: 40px;
+      margin: 200px 0px 0 15px;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      background: rgb(48, 129, 252);
+      cursor: pointer;
+    }
+    #right {
+      width: 300px;
+      height: 500px;
+      border: 2px dashed rgb(48, 129, 252);
+      float: right;
+    }
+    #right li {
+      height: 40px;
+      line-height: 40px;
+      border-bottom: 2px dashed #ff5511;
+      padding-left: 8px;
+    }
+    #right li:first-child {
+      margin-top: 10px;
+      border-top: 2px dashed #ff0000;
+    }
+    #xz {
+      width: 15px;
+      height: 15px;
+      line-height: 40px;
+      margin: 10px;
+    }
+  </style>
+  <body>
+    <div id="box">
+      <div id="left">
+        <input type="text" placeholder="添加" id="left-add" />
+        <input type="checkbox" id="left-all" /><b>全选</b>
+        <ul id="left-ul">
+          <!-- <li><input type="checkbox" id="xz" />苹果</li>
+          <li><input type="checkbox" id="xz" />草莓</li>
+          <li><input type="checkbox" id="xz" />袖子</li> -->
+        </ul>
+      </div>
+      <button id="left-btn">⇦</button>
+      <button id="right-btn">⇨</button>
+      <div id="right">
+        <input type="text" placeholder="添加" id="right-add" />
+        <input type="checkbox" id="right-all" /><b>全选</b>
+        <ul id="right-ul">
+          <!-- <li><input type="checkbox" id="xz" />阳光玫瑰</li>
+          <li><input type="checkbox" id="xz" />无花果</li>
+          <li><input type="checkbox" id="xz" />火龙果</li> -->
+        </ul>
+      </div>
+    </div>
+    <script>
+      var left = [
+        {
+          id: 1,
+          name: "苹果",
+          status: false,
+        },
+        {
+          id: 2,
+          name: "草莓",
+          status: false,
+        },
+        {
+          id: 3,
+          name: "柚子",
+          status: false,
+        },
+      ];
+      var right = [
+        {
+          id: 1,
+          name: "阳光玫瑰",
+          status: false,
+        },
+        {
+          id: 2,
+          name: "无花果",
+          status: false,
+        },
+        {
+          id: 3,
+          name: "火龙果",
+          status: false,
+        },
+      ];
+      $(function () {
+        leftFun();
+        rightFun();
+        $("#left-add").on("keydown", addLeftFun);
+        $("#right-add").on("keydown", addRightFun);
+        $("#left-all").change(leftAllFun);
+        $("#right-all").change(rightAllFun);
+        $("#left-ul li").on("change", leftStatusFun);
+        $("#right-ul li").on("change", rightStatusFun);
+        $("#left-btn").click(rightToLeft);
+        $("#right-btn").click(leftToRight);
+      });
+
+      //左到右按钮事件
+      function leftToRight() {
+        let leftTmp = left.filter((item) => {
+          return item.status;
+        });
+        right = right.concat(leftTmp);
+        left = left.filter((item) => {
+          return !item.status;
+        });
+        leftFun();
+        rightFun();
+      }
+      //右到左按钮事件
+      function rightToLeft() {
+        let rightTmp = right.filter((item) => {
+          return item.status;
+        });
+        left = left.concat(rightTmp);
+        right = right.filter((item) => {
+          return !item.status;
+        });
+        leftFun();
+        rightFun();
+      }
+
+      function rightStatusFun() {
+        let checked = $(this).find("input").prop("checked");
+        let index = $(this).data("index");
+        right[index].status = checked;
+        rightAllStatus();
+      }
+      //检查右侧全选是否都是选中
+      function rightAllStatus() {
+        let checked = right.every((item) => {
+          return item.status;
+        });
+        $("#right-all").prop("checked", checked);
+      }
+      //右侧列表全选
+      function rightAllFun() {
+        let checked = $(this).prop("checked");
+        right.forEach((item) => {
+          item.status = checked;
+        });
+        rightFun();
+      }
+
+      function leftStatusFun() {
+        let checked = $(this).find("input").prop("checked");
+        let index = $(this).data("index");
+        left[index].status = checked;
+        leftAllStatus();
+      }
+
+      //检查左侧全选是否都是选中
+      function leftAllStatus() {
+        let checked = left.every((item) => {
+          return item.status;
+        });
+        $("#left-all").prop("checked", checked);
+      }
+      //左侧列表全选
+      function leftAllFun() {
+        let checked = $(this).prop("checked");
+        left.forEach((item) => {
+          item.status = checked;
+        });
+        leftFun();
+      }
+
+      //右侧列表添加
+      function addRightFun() {
+        if (event.key == "Enter") {
+          let val = $(this).val();
+          let data = {
+            id: new Date().getTime(),
+            name: val,
+            status: false,
+          };
+          right.push(data);
+          $("#right-ul li").off("change", rightStatusFun);
+          rightFun();
+          $(this).val("");
+        }
+      }
+      //左侧列表添加
+      function addLeftFun() {
+        if (event.key == "Enter") {
+          let val = $(this).val();
+          let data = {
+            id: new Date().getTime(),
+            name: val,
+            status: false,
+          };
+          left.push(data);
+          $("#left-ul li").off("change", leftStatusFun);
+          leftFun();
+          $(this).val("");
+        }
+      }
+
+      //渲染左侧列表
+      function leftFun() {
+        var html = "";
+        left.forEach((item, index) => {
+          html += `  <li data-index='${index}'><input type="checkbox" id="xz" ${
+            item.status ? "checked" : ""
+          } />${item.name}</li>`;
+        });
+        $("#left-ul").html(html);
+        $("#left-ul li").on("change", leftStatusFun);
+      }
+      //渲染右侧列表
+      function rightFun() {
+        var html = "";
+        right.forEach((item, index) => {
+          html += `  <li data-index='${index}'><input type="checkbox" id="xz" ${
+            item.status ? "checked" : ""
+          } />${item.name}</li>`;
+        });
+        $("#right-ul").html(html);
+        $("#right-ul li").on("change", rightStatusFun);
+      }
+    </script>
+  </body>
+</html>
