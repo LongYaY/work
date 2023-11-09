@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>作业目录</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style: none;
+    }
+    #box {
+      width: 500px;
+      border: 1px solid black;
+      padding: 15px;
+      margin: 100px auto;
+      border-radius: 7px;
+      background-color: #fff;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    table {
+      width: 500px;
+      border: 1px solid black;
+      border-collapse: collapse;
+      text-align: center;
+    }
+    tr {
+      height: 35px;
+    }
+    td {
+      color: #007bff;
+    }
+    a {
+      color: #ff0000;
+      text-decoration: none;
+    }
+  </style>
+  <body>
+    <div id="box">
+      <table border="1">
+        <thead>
+          <tr>
+            <th>作业</th>
+            <th>日期</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href=""></a></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script src="../jquery/node_modules/jquery/dist/jquery.js"></script>
+    <script>
+      let arr = [
+        {
+          link: "../三段2/mp3.html",
+          title: "mp3",
+        },
+        {
+          link: "../三段2/mp4.html",
+          title: "mp4",
+        },
+        {
+          link: "../三段2/增删改查.html",
+          title: "增删改查",
+        },
+        {
+          link: "../三段2/留言板.html",
+          title: "留言板",
+        },
+        {
+          link: "../三段2/购物车.html",
+          title: "购物车",
+        },
+        {
+          link: "../jquery/增删改查.html",
+          title: "JQ 增删改查",
+        },
+        {
+          link: "../jquery/左右互选.html",
+          title: "JQ 左右互选",
+        },
+        {
+          link: "../jquery/tab标签页.html",
+          title: "JQ Tab标签页",
+        },
+      ];
+      $(function () {
+        render();
+        renderJQ();
+      });
+      function getDate() {
+        let date = new Date();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        return `${month}月${day}日`;
+      }
+      //原生作业
+      function render() {
+        let html = "";
+        arr.forEach((item) => {
+          html += ` <tr>
+            <td><a href="${item.link}">${item.title}</a></td>
+            <td>${getDate()}</td>
+          </tr>`;
+        });
+        $("tbody").html(html);
+      }
+    </script>
+  </body>
+</html>
