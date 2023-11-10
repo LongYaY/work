@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>茶叶管理</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .search-form {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search-form button.add-btn {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #f44336;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    #addTea {
+      width: 500px;
+      height: 550px;
+      margin: 100px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    #addTea h2 {
+      margin-bottom: 20px;
+    }
+    #addTea .form-row {
+      margin-bottom: 10px;
+    }
+    #addTea input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+    #addTea button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #4caf50;
+      border: none;
+      cursor: pointer;
+      margin: 30px 0 0 90px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    tbody button {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      color: #fff;
+      background-color: #4caf50;
+      border: none;
+      cursor: pointer;
+    }
+    tbody button:first-child {
+      background-color: #f44336;
+    }
+    tbody button:last-child {
+      background-color: #007bff;
+    }
+    th,
+    td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f5f5f5;
+      font-weight: bold;
+      text-align: center;
+    }
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+    .action-icons {
+      display: flex;
+    }
+    .action-icons span {
+      padding: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    .action-icons .edit-icon {
+      color: #ffc107;
+    }
+    .action-icons .delete-icon {
+      color: #dc3545;
+    }
+    .page-info {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    #mask {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    #masks {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    #modify {
+      width: 500px;
+      height: 550px;
+      margin: 100px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    #modify h2 {
+      margin-bottom: 20px;
+    }
+
+    #modify .form-row {
+      margin-bottom: 10px;
+    }
+
+    #modify input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    #modify button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #4caf50;
+      border: none;
+      cursor: pointer;
+      margin: 30px 0 0 90px;
+    }
+    #cancels-btn {
+      background-color: #dc3545;
+    }
+    #query {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    #querys {
+      width: 500px;
+      height: 550px;
+      margin: 100px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    #querys h2 {
+      margin-bottom: 20px;
+    }
+
+    #querys .form-row {
+      margin-bottom: 10px;
+    }
+
+    #querys input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    #querys button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #4caf50;
+      border: none;
+      cursor: pointer;
+      margin: 30px 0 0 185px;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <h1>茶叶管理</h1>
+      <div class="search-form">
+        <button class="btn add-btn" id="addBtn">添加茶叶</button>
+      </div>
+
+      <div id="mask">
+        <div id="addTea">
+          <h2>添加茶叶</h2>
+          <div class="form-row">
+            茶叶名称：<br />
+            <input type="text" id="name" />
+          </div>
+          <div class="form-row">
+            茶叶类型：<br />
+            <input type="text" id="type" />
+          </div>
+          <div class="form-row">
+            茶叶价格：<br />
+            <input type="text" id="price" />
+          </div>
+          <div class="form-row">
+            茶叶库存：<br />
+            <input type="text" id="stock" />
+          </div>
+          <div class="form-row">
+            茶叶描述：<br />
+            <input type="text" id="description" />
+          </div>
+          <button id="saceBtn">确定添加</button>
+          <button id="cancel-btn">取消添加</button>
+        </div>
+      </div>
+
+      <div id="masks">
+        <div id="modify">
+          <h2>添加茶叶---<b></b></h2>
+          <div class="form-row">
+            茶叶名称：<br />
+            <input type="text" id="names" />
+          </div>
+          <div class="form-row">
+            茶叶类型：<br />
+            <input type="text" id="types" />
+          </div>
+          <div class="form-row">
+            茶叶价格：<br />
+            <input type="text" id="prices" />
+          </div>
+          <div class="form-row">
+            茶叶库存：<br />
+            <input type="text" id="stocks" />
+          </div>
+          <div class="form-row">
+            茶叶描述：<br />
+            <input type="text" id="descriptions" />
+          </div>
+          <button id="additions-btn">确定修改</button>
+          <button id="cancels-btn">取消修改</button>
+        </div>
+      </div>
+
+      <div id="query">
+        <div id="querys">
+          <h2>茶叶---<b id="bi"></b></h2>
+          <div class="form-row">
+            茶叶名称：<br />
+            <input type="text" id="nameq" />
+          </div>
+          <div class="form-row">
+            茶叶类型：<br />
+            <input type="text" id="typeq" />
+          </div>
+          <div class="form-row">
+            茶叶价格：<br />
+            <input type="text" id="priceq" />
+          </div>
+          <div class="form-row">
+            茶叶库存：<br />
+            <input type="text" id="stockq" />
+          </div>
+          <div class="form-row">
+            茶叶描述：<br />
+            <input type="text" id="descriptionq" />
+          </div>
+          <button id="cancels-btn">取消</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>茶叶ID</th>
+            <th>茶叶名称</th>
+            <th>茶叶类型</th>
+            <th>茶叶价格</th>
+            <th>茶叶库存</th>
+            <th>茶叶描述</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- <tr>
+            <td>茶叶ID</td>
+            <td>茶叶名称</td>
+            <td>茶叶类型</td>
+            <td>茶叶价格</td>
+            <td>茶叶库存</td>
+            <td>茶叶描述</td>
+            <td>创建时间</td>
+            <td>更新时间</td>
+            <td>操作</td>
+          </tr> -->
+        </tbody>
+      </table>
+    </div>
+    <script src="./jquery.js"></script>
+    <script>
+      let id;
+      $(function () {
+        renderTeaList();
+        $("#addTea").on("click", addTeaFun);
+        $("table").on("click", tableFun);
+        $("#modify").on("click", modifyFun);
+      });
+
+      //编辑
+      function modifyFun() {
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "取消修改"
+        ) {
+          $("#masks").hide();
+        }
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "确定修改"
+        ) {
+          let name = $("#names").val();
+          let type = $("#types").val();
+          let price = $("#prices").val();
+          let stock = $("#stocks").val();
+          let description = $("#descriptions").val();
+          let id = $("b").html();
+          let obj = {
+            name,
+            type,
+            price,
+            stock,
+            description,
+          };
+          $.ajax({
+            type: "PUT",
+            url: `https://liu.zzgoodqc.cn/teas/${id}`,
+            data: obj,
+            dataType: "json",
+            success: function (data) {
+              renderTeaList();
+              $("#masks").hide();
+            },
+          });
+        }
+      }
+
+      //删除、编辑、查询
+      function tableFun() {
+        id = $(event.target).data("id");
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "删除"
+        ) {
+          $.ajax({
+            type: "DELETE",
+            url: `https://liu.zzgoodqc.cn/teas/${id}`,
+            success: function () {
+              renderTeaList();
+            },
+          });
+        }
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "编辑"
+        ) {
+          $("#masks").show();
+          id = $(event.target).data("id");
+          $.ajax({
+            type: "GET",
+            url: `https://liu.zzgoodqc.cn/teas/${id}`,
+            success: function (data) {
+              //   console.log(data);
+              $("b").html(data.data.id);
+              $("#names").val(data.data.name);
+              $("#types").val(data.data.type);
+              $("#prices").val(data.data.price);
+              $("#stocks").val(data.data.stock);
+              $("#descriptions").val(data.data.description);
+            },
+          });
+        }
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "查询"
+        ) {
+          $("#query").show();
+          id = $(event.target).data("id");
+          $.ajax({
+            type: "GET",
+            url: `https://liu.zzgoodqc.cn/teas/${id}`,
+            success: function (data) {
+              $("#bi").html(data.data.id);
+              $("#nameq").val(data.data.name);
+              $("#typeq").val(data.data.type);
+              $("#priceq").val(data.data.price);
+              $("#stockq").val(data.data.stock);
+              $("#descriptionq").val(data.data.description);
+            },
+          });
+        }
+      }
+
+      //取消查询
+      $("#query").on("click", function () {
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "取消"
+        ) {
+          $("#query").hide();
+        }
+      });
+
+      //提交茶叶遮罩层
+      $("#addBtn").on("click", function () {
+        $("#mask").show();
+      });
+
+      //添加茶叶
+      function addTeaFun() {
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "取消添加"
+        ) {
+          $("#mask").hide();
+        }
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "确定添加"
+        ) {
+          let name = $("#name").val();
+          let type = $("#type").val();
+          let price = $("#price").val();
+          let stock = $("#stock").val();
+          let description = $("#description").val();
+          let obj = {
+            name,
+            type,
+            price,
+            stock,
+            description,
+          };
+          $.ajax({
+            type: "POST",
+            url: "https://liu.zzgoodqc.cn/teas",
+            data: obj,
+            success: function (data) {
+              renderTeaList();
+              $("#mask").hide();
+            },
+          });
+        }
+      }
+
+      //渲染茶叶列表
+      function renderTeaList() {
+        let html = "";
+        $.ajax({
+          type: "GET",
+          url: "https://liu.zzgoodqc.cn/teas",
+          success: function (data) {
+            let tea = JSON.parse(data).data;
+            tea.forEach((item, index) => {
+              html += ` <tr>
+                           <td>${item.id}</td>
+                           <td>${item.name}</td>
+                           <td>${item.type}</td>
+                           <td>${item.price}</td>
+                           <td>${item.stock}</td>
+                           <td>${item.description}</td>
+                           <td>${item.created_at}</td>
+                           <td>${item.updated_at}</td>
+                           <td><button data-id=${item.id}>删除</button> <button data-id=${item.id}>编辑</button> <button data-id=${item.id}>查询</button></td>
+                         </tr>`;
+            });
+            $("tbody").html(html);
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
